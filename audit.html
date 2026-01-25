@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Overflow Audit - KAYTOKI</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #f0f0f0;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .audit-result {
+      background: white;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+    .problem {
+      color: #d00;
+      font-weight: bold;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 5px;
+      text-align: left;
+    }
+    th {
+      background: #f0f0f0;
+    }
+  </style>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page">
+    <section class="hero" id="home">
+      <div class="hero-header">
+        <img class="header-logo" src="../шапка/иконка.png" alt="Логотип" />
+        <nav class="hero-nav" aria-label="Основная навигация">
+          <a class="nav-link" href="#about" style="--x: 982px; --y: 31px">Обо мне</a>
+          <a class="nav-link" href="#services" style="--x: 1088px; --y: 31px">Услуги</a>
+          <a class="nav-link" href="#works" style="--x: 1179px; --y: 31px">Работы</a>
+          <a class="nav-link" href="#prices" style="--x: 1280px; --y: 31px">Цены</a>
+          <a class="nav-link" href="#contact" style="--x: 1362px; --y: 31px">Контакты</a>
+        </nav>
+        <a class="header-cta" href="#contact">Связаться</a>
+        <button
+          class="hero-burger"
+          type="button"
+          aria-label="Открыть меню"
+          aria-expanded="false"
+          aria-controls="hero-mobile-menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+      <div class="hero-mobile-menu" id="hero-mobile-menu" aria-hidden="true">
+        <div class="hero-mobile-panel">
+          <a href="#about">Обо мне</a>
+          <a href="#services">Услуги</a>
+          <a href="#works">Работы</a>
+          <a href="#prices">Цены</a>
+          <a href="#contact">Контакты</a>
+        </div>
+      </div>
+
+      <div class="bg-ellipse-outline" aria-hidden="true"></div>
+    </section>
+  </div>
+
+  <script>
+    // Audit script
+    (() => {
+      const vw = document.documentElement.clientWidth;
+      const bad = [];
+      document.querySelectorAll("*").forEach(el => {
+        const r = el.getBoundingClientRect();
+        if (r.width > vw + 1 || r.right > vw + 1) {
+          const cs = getComputedStyle(el);
+          bad.push({
+            el,
+            tag: el.tagName.toLowerCase(),
+            cls: el.className,
+            width: r.width.toFixed(1),
+            right: r.right.toFixed(1),
+            vw,
+            position: cs.position,
+            left: cs.left,
+            rightCss: cs.right,
+            marginLeft: cs.marginLeft,
+            marginRight: cs.marginRight,
+            transform: cs.transform,
+            whiteSpace: cs.whiteSpace
+          });
+        }
+      });
+      console.log("clientWidth:", vw, "scrollWidth:", document.documentElement.scrollWidth);
+      console.table(bad.slice(0, 30));
+      return bad;
+    })();
+  </script>
+</body>
+</html>
