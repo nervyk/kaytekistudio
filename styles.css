@@ -1,0 +1,2410 @@
+/* styles.css */
+
+body{ overflow-x: clip; } /* предотвращение горизонтального скролла из-за декора */
+
+/* ---- базовые переменные ---- */
+:root {
+  --blue: #0038ff;
+  --blue-soft: #e5ebff;
+  --text-gray: #5e5e5e;
+  --text-muted: #6b6b6b;
+  --border: #e5e5e5;
+  --prices-container: 1330px;
+
+  /* дизайн-канвас hero (как в фигме) */
+  --heroW: 1920;
+  --heroH: 950;
+
+  /* цены */
+  --prices-container: 1330px;
+
+  /* сколько декор отступает от сетки наружу */
+  --decor-out: clamp(24px, 3vw, 72px);
+
+  /* ручной микросдвиг, если нужно */
+  --decor-y-top: clamp(6px, 1vw, 18px);
+  --decor-y-bot: clamp(16px, 2vw, 44px);
+  
+  /* переменные для нового позиционирования декора */
+  --decor-out-x: clamp(40px, 5vw, 110px);   /* насколько наружу от контейнера */
+  --decor-out-y: clamp(10px, 2vw, 40px);    /* насколько вверх/вниз */
+
+  /* высота хедера */
+  --headerH: 80px;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: #fff;
+  color: #111;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.container {
+  max-width: 1920px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ---- HEADER (нормальный адаптив вместо пикселей) ---- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-inner {
+  height: var(--headerH);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.brand { display: inline-flex; align-items: center; text-decoration: none; }
+.brand-logo { width: 50px; height: 50px; display: block; }
+
+.nav {
+  margin-left: auto;
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.nav-link {
+  font-family: "Comfortaa", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 500;
+  color: var(--text-gray);
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 16px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.nav-link:hover,
+.nav-link:focus-visible {
+  color: var(--blue);
+  background: rgba(0, 56, 255, 0.08);
+  outline: none;
+}
+
+.header-cta {
+  margin-left: 12px;
+  width: 140px;
+  height: 46px;
+  border-radius: 25px;
+  background: var(--blue);
+  color: #fff;
+  font-family: "Manrope", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 19px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+.header-cta:hover,
+.header-cta:focus-visible {
+  background: #002fd4;
+  outline: none;
+}
+
+.burger {
+  display: none;
+  margin-left: auto;
+  width: 34px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+}
+.burger span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--blue);
+  border-radius: 2px;
+}
+.burger span:nth-child(1) { top: 0; }
+.burger span:nth-child(2) { top: 10px; }
+.burger span:nth-child(3) { top: 20px; }
+
+.mobile-menu {
+  display: none;
+  border-top: 1px solid var(--border);
+  padding: 16px 24px 20px;
+  background: #fff;
+}
+.mobile-menu.is-open { display: grid; gap: 12px; }
+.mobile-menu a {
+  font-family: "Comfortaa", system-ui, sans-serif;
+  font-weight: 700;
+  color: var(--text-gray);
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 12px;
+}
+.mobile-menu a:hover { background: rgba(0,56,255,0.08); color: var(--blue); }
+
+/* ---- HERO: главный трюк адаптива ---- */
+/*
+  hero-core — фиксированный 1920×950 канвас.
+  Мы считаем scale = min(1, viewportWidth/1920) и масштабируем.
+  Высоту hero подгоняем под scale, чтобы не было “обрезано справа/снизу”.
+*/
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+
+  --s: min(1, calc(100vw / (var(--heroW) * 1px)));
+
+  /* высота секции = высота канваса * scale */
+  height: calc(var(--heroH) * 1px * var(--s));
+
+  /* на очень узких планшетах чтобы не схлопывалось */
+  min-height: 520px;
+}
+
+/* канвас */
+.hero-core {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: calc(var(--heroW) * 1px);
+  height: calc(var(--heroH) * 1px);
+
+  transform: translateX(-50%) scale(var(--s));
+  transform-origin: top center;
+
+  /* удобно, чтобы абсолюты были внутри этого блока */
+}
+
+/* ---- ДЕКОР ФОНА (как в фигме) ---- */
+.bg-ellipse-outline {
+  position: absolute;
+  left: -168px;
+  top: 139px;
+  width: 336px;
+  height: 336px;
+  border: 2px solid var(--blue-soft);
+  border-radius: 50%;
+}
+.bg-ellipse-fill {
+  position: absolute;
+  left: 1543px;
+  top: 509px;
+  width: 245px;
+  height: 245px;
+  background: var(--blue-soft);
+  border-radius: 50%;
+}
+.bg-diamond {
+  position: absolute;
+  left: 1462px;
+  top: 363px;
+  width: 190px;
+  height: 190px;
+  border: 2px solid var(--blue-soft);
+  transform: rotate(-45deg);
+}
+
+/* ---- ШАРЫ (картинки не теряем) ---- */
+.ball {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  will-change: transform;
+}
+.ball-left {
+  left: 467px;
+  top: 190px;
+  width: 184.62px;
+  height: 195.92px;
+  transform: matrix(-0.94, 0.34, 0.34, 0.94, 0, 0);
+}
+.ball-right {
+  left: 1174px;
+  top: 172px;
+  width: 184.62px;
+  height: 211px;
+  transform: rotate(30.23deg);
+}
+
+/* ---- Бейдж статуса ---- */
+.status-badge {
+  position: absolute;
+  left: 50%;
+  top: 253px;
+  transform: translateX(-50%);
+  width: 255px;
+  height: 39px;
+  background: var(--blue-soft);
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  font-family: "Comfortaa", system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--blue);
+  z-index: 5;
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--blue);
+}
+
+/* ---- ЛОГО (blur + main) ---- */
+.logo-wrap {
+  position: absolute;
+  left: 50%;
+  top: 324px;
+  transform: translateX(-50%);
+  width: 779px;
+  height: 184px;
+  z-index: 6;
+}
+.logo-wrap img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.logo-blur { filter: blur(5px); opacity: 0.9; }
+.logo-main { }
+
+.hero-subtitle {
+  position: absolute;
+  left: 50%;
+  top: 540px;
+  transform: translateX(-50%);
+  width: 642px;
+
+  font-family: "Comfortaa", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 25px;
+  text-align: center;
+  color: var(--text-muted);
+  z-index: 6;
+}
+
+/* ---- CTA ---- */
+.hero-cta {
+  position: absolute;
+  left: 50%;
+  top: 597px;
+  transform: translateX(-50%);
+  width: 275px;
+  height: 65px;
+
+  background: var(--blue);
+  border-radius: 37.5px;
+  color: #fff;
+  text-decoration: none;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  font-family: "Comfortaa", system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+
+  z-index: 6;
+}
+.hero-cta:hover { background: #002fd4; }
+
+/* ---- Scroll hint (как в фигме) ---- */
+.scroll-hint {
+  position: absolute;
+  left: 50%;
+  top: 862px;
+  transform: translateX(-50%);
+  width: 163px;
+  height: 60px;
+  z-index: 6;
+  text-align: center;
+}
+.scroll-text {
+  font-family: "Comfortaa", system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 8px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+.scroll-line {
+  width: 1px;
+  height: 40px;
+  margin: 0 auto;
+  background: linear-gradient(180deg, var(--blue) 0%, rgba(0,56,255,0) 100%);
+  border-radius: 25px;
+}
+
+/* ---- АДАПТИВ: десктоп/ноут/планшет ---- */
+
+/* на ноуте/планшете: отключаем лишний декор, чтобы “дышало”, но картинки оставляем */
+@media (max-width: 1440px) {
+  .bg-ellipse-outline { opacity: 0.7; }
+  .bg-diamond { opacity: 0.7; }
+}
+
+/* планшет: режем декор сильнее */
+@media (max-width: 1024px) {
+  .bg-ellipse-outline,
+  .bg-diamond { display: none; }   /* жертвуем декором */
+  .bg-ellipse-fill { opacity: 0.6; }
+
+  /* header: меню прячем, бургер включаем */
+  .nav { display: none; }
+  .header-cta { display: none; }
+  .burger { display: inline-block; }
+}
+
+/* крупный планшет/малый ноут: чуть уменьшаем минимальную высоту */
+@media (max-width: 900px) {
+  .hero { min-height: 480px; }
+}
+
+:root{
+  --blue:#0038ff;
+  --text-gray:#5e5e5e;
+  --text-muted:#6b6b6b;
+  --line:#d9d9d9;
+
+  --canvasW:1920;
+  --canvasH:950;
+}
+
+/* секция */
+.about{
+  position: relative;
+  background:#fff;
+  overflow:hidden;
+
+  /* scale по ширине (только десктоп/ноут/планшет) */
+  --s: min(1, calc(100vw / (var(--canvasW) * 1px)));
+
+  height: calc(var(--canvasH) * 1px * var(--s));
+  min-height: 680px; /* чтобы на планшетах не стало слишком мелко */
+}
+
+/* канвас 1920x950 */
+.about-core{
+  position:absolute;
+  left:50%;
+  top:0;
+  width: calc(var(--canvasW) * 1px);
+  height: calc(var(--canvasH) * 1px);
+
+  transform: translateX(-50%) scale(var(--s));
+  transform-origin: top center;
+}
+
+/* --- ПРОМО (как картинка слева) --- */
+.about-promo{
+  position:absolute;
+  left:282px;
+  top:67px;
+  width:622px;
+  height:816px;
+}
+
+.about-promo-img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:contain;
+}
+
+/* кнопка на промо (прибита снизу внутри промо) */
+.about-promo-cta{
+  position:absolute;
+  left:50%;
+  bottom:40px;
+  transform:translateX(-50%);
+  width: 360px;
+  height: 74px;
+  border-radius: 40px;
+  background: var(--blue);
+  color:#fff;
+  text-decoration:none;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-family:"Comfortaa", system-ui, sans-serif;
+  font-weight:700;
+  font-size:20px;
+}
+
+/* --- 3D фигура справа --- */
+.about-figure{
+  position:absolute;
+  left:1375.07px;
+  top:101.92px;
+  width:86.71px;
+  height:201.37px;
+  transform: translateX(30px) rotate(15.26deg);
+  display:block;
+}
+
+/* --- правая колонка текста --- */
+.about-text{
+  position:absolute;
+  left:985px;
+  top:198.62px;
+  width:640px;
+  height:552.38px;
+}
+
+.about-tag{
+  font-family:"Comfortaa", system-ui, sans-serif;
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:0.1em;
+  color:var(--blue);
+  margin-bottom:18px;
+}
+
+.about-title{
+  margin:0 0 18px 0;
+  font-family:"Comfortaa", system-ui, sans-serif;
+  font-weight:700;
+  font-size:56px;
+  line-height:1.05;
+  color:#111;
+}
+
+.accent{ color:var(--blue); }
+
+.about-p{
+  margin: 0 0 18px 0;
+  font-family:"Comfortaa", system-ui, sans-serif;
+  font-weight:700;
+  font-size:16px;
+  line-height:30px;
+  color:var(--text-muted);
+}
+
+.about-divider{
+  margin-top: 26px;
+  width:640px;
+  height:1px;
+  background: var(--line);
+  border-radius:25px;
+}
+
+/* --- стата --- */
+.about-stats{
+  margin-top: 24px;
+  display:flex;
+  gap: 130px; /* под твой figma-расклад */
+}
+
+.stat-num{
+  font-family:"Bebas Neue", system-ui, sans-serif;
+  font-weight:400;
+  font-size:64px;
+  line-height:77px;
+  color:var(--blue);
+}
+
+.stat-label{
+  font-family:"Comfortaa", system-ui, sans-serif;
+  font-weight:400;
+  font-size:14px;
+  line-height:16px;
+  letter-spacing:0.05em;
+  color:var(--text-gray);
+}
+
+/* --- “жертвы” на узких, но картинки сохраняем --- */
+@media (max-width: 1200px){
+  /* чуть сжать расстояния, чтобы справа не выглядело пусто */
+  .about-stats{ gap: 80px; }
+}
+
+@media (max-width: 1024px){
+  /* на планшете скрываем 3D фигуру (декор), но промо+текст остаются */
+  .about-figure{ display:none; }
+  .about{ min-height: 620px; }
+}
+
+:root{
+  --blue:#0038ff;
+  --bg:#f5f5f7;
+  --card:#ffffff;
+  --border:#bbc2cf;
+  --line:#d9d9d9;
+
+  --text:#0a0a0a;
+  --muted:#5e5e5e;
+
+  --radius:25px;
+}
+
+.services{
+  background: var(--bg);
+  padding: 90px 0 110px;
+}
+
+.services-container{
+  max-width: 1530px;   /* чтобы визуально совпало с 3 карточками по 448 + гэпы */
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.services-head{
+  margin-bottom: 34px;
+}
+
+.services-tag{
+  font-family:"Comfortaa", system-ui, sans-serif;
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:0.1em;
+  color: var(--blue);
+  margin-bottom: 14px;
+}
+
+.services-title{
+  margin:0;
+  font-family:"Comfortaa", system-ui, sans-serif;
+  font-weight:800;
+  font-size:56px;
+  line-height:1.05;
+  color: var(--text);
+}
+.accent{ color: var(--blue); }
+
+/* GRID: 3 колонки -> 2 -> 1 */
+.services-grid{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 34px 52px; /* приблизительно как на макете */
+}
+
+/* CARD */
+.service-card{
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 40px 40px 28px;
+  min-height: 500px; /* как в фигме */
+  display:flex;
+  flex-direction:column;
+}
+
+.service-card--featured{
+  box-shadow: 0 0 100px rgba(0, 56, 255, 0.10);
+}
+
+/* синяя полоска сверху для “выделенной” */
+.service-topline{
+  position:absolute;
+  left: 12px;
+  right: 12px;
+  top: 0;
+  height: 4px;
+  background: var(--blue);
+  border-radius: 0 0 12px 12px;
+}
+
+/* иконка как в фигме */
+.service-icon{
+  width: 60px;
+  height: 68px;
+  display: block;
+  object-fit: contain;
+  margin-bottom: 22px;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.service-name{
+  margin: 0 0 14px 0;
+  font-family:"Comfortaa", system-ui, sans-serif;
+  font-weight:800;
+  font-size:24px;
+  line-height:27px;
+  color: var(--text);
+}
+
+.service-desc{
+  margin: 0 0 22px 0;
+  font-family:"Comfortaa", system-ui, sans-serif;
+  font-weight:400;
+  font-size:14px;
+  line-height:20px;
+  color: var(--muted);
+  max-width: 360px;
+}
+
+/* список с разделителями */
+.service-list{
+  list-style:none;
+  padding:0;
+  margin: 0;
+  display:flex;
+  flex-direction:column;
+  gap: 0;
+}
+
+.service-list li{
+  position: relative;
+  padding: 12px 0 12px 20px;
+  font-family:"Comfortaa", system-ui, sans-serif;
+  font-weight:400;
+  font-size:14px;
+  line-height:20px;
+  color: var(--muted);
+}
+
+.service-list li::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top: 20px;
+  width: 12px;
+  height: 8px;
+  border-left: 2px solid var(--blue);
+  border-bottom: 2px solid var(--blue);
+  transform: rotate(-45deg);
+  opacity: 0.9;
+}
+
+/* линии между пунктами */
+.service-list li + li{
+  border-top: 1px solid var(--line);
+}
+
+/* подпись снизу */
+.service-foot{
+  margin-top: auto;
+  padding-top: 18px;
+  font-family:"Comfortaa", system-ui, sans-serif;
+  font-weight:700;
+  font-size:12px;
+  line-height:20px;
+  letter-spacing:0.1em;
+  color: var(--blue);
+}
+
+/* ---- адаптив: ноут ---- */
+@media (max-width: 1400px){
+  .services-grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 28px;
+  }
+  .services-title{ font-size: 50px; }
+}
+
+/* ---- адаптив: планшет ---- */
+@media (max-width: 900px){
+  .services-grid{
+    grid-template-columns: 1fr;
+  }
+  .service-card{
+    min-height: unset;
+  }
+  .services-title{ font-size: 44px; }
+}
+
+/* PORTFOLIO */
+.portfolio{
+  background:#fff;
+  padding: 90px 0 110px;
+}
+
+.portfolio-container{
+  max-width: 1530px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.portfolio-head{
+  margin-bottom: 34px;
+}
+
+.portfolio-tag{
+  font-family:"Comfortaa", system-ui, sans-serif;
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:0.1em;
+  color:#0038ff;
+  margin-bottom: 14px;
+}
+
+.portfolio-title{
+  display:block;
+  height: 64px;      /* можно подогнать */
+  width: auto;
+  max-width: 720px;  /* чтобы не разъезжалось */
+}
+
+/* GRID 3->2->1 */
+.portfolio-grid{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 40px 50px; /* близко к фигме */
+}
+
+/* CARD */
+.work-card{
+  position: relative;
+  border-radius: 30.5px;
+  overflow: hidden;
+  background:#fff;
+  display:block;
+  aspect-ratio: 1 / 1; /* 410x410 */
+  text-decoration:none;
+}
+
+/* картинка пина */
+.work-img{
+  position:absolute;
+  inset: 0;
+  width:100%;
+  height:100%;
+  object-fit: cover; /* чтобы всегда красиво заполняло */
+  transform: scale(1.01);
+}
+
+/* мягкий голубой градиент поверх (как в фигме) */
+.work-overlay{
+  position:absolute;
+  inset:0;
+  background: linear-gradient(293deg, rgba(0,56,255,0) 0%, rgba(0,56,255,0.10) 100%);
+}
+
+/* AI card overlay (синий низ) */
+.work-card--ai .work-overlay{
+  background: linear-gradient(180deg, rgba(0,56,255,0) -5.16%, #0038FF 100%);
+}
+
+/* AI текст */
+.work-ai-text{
+  position:absolute;
+  left: 32px;
+  right: 32px;
+  bottom: 34px;
+  color:#fff;
+  font-family:"Comfortaa", system-ui, sans-serif;
+}
+
+.work-ai-title{
+  font-weight:700;
+  font-size:32px;
+  line-height:36px;
+  margin-bottom: 12px;
+}
+
+.work-ai-sub{
+  font-weight:500;
+  font-size:14px;
+  line-height:16px;
+  max-width: 320px;
+  opacity: 0.95;
+}
+
+/* hover по желанию */
+.work-card:hover .work-img{
+  transform: scale(1.04);
+  transition: transform .25s ease;
+}
+.work-card .work-img{
+  transition: transform .25s ease;
+}
+
+/* ---- ноуты ---- */
+@media (max-width: 1400px){
+  .portfolio-grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+  }
+  .portfolio-title{
+    height: 56px;
+  }
+}
+
+/* ---- планшет ---- */
+@media (max-width: 900px){
+  .portfolio-grid{
+    grid-template-columns: 1fr;
+  }
+  .portfolio-title{
+    height: 48px;
+  }
+}
+
+:root{
+  --blue:#0038FF;
+  --white:#fff;
+}
+
+/* ===== REVIEWS ===== */
+/* ===== Reviews (Что говорят наши клиенты) ===== */
+.reviews {
+  position: relative;
+  background: #0038FF;
+  min-height: 679px;
+  padding: 113px 0 120px;
+  overflow: hidden;
+}
+
+.reviews__container {
+  width: min(1450px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+.reviews__kicker {
+  font-family: "Comfortaa", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 35px; /* ~113 -> 164 */
+}
+
+.reviews__title {
+  font-family: "Comfortaa", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  font-weight: 700;
+  font-size: clamp(36px, 3.2vw, 58px);
+  line-height: 1.05;
+  color: #FFFFFF;
+  margin: 0 0 60px 0;
+}
+
+/* фоновые кавычки: 2 шт <img>, каждая 139×122 */
+.reviews__quote {
+  position: absolute;
+  width: 139px;
+  height: 122px;
+  top: -19px;
+  opacity: 0.05;
+  pointer-events: none;
+  user-select: none;
+}
+
+.reviews__quote--left {
+  left: 48px;
+}
+
+.reviews__quote--right {
+  right: 48px;
+}
+
+.reviews__head {
+  margin-bottom: 60px;
+}
+
+.reviews__kicker {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 450px);
+  justify-content: space-between;
+  gap: 50px; /* между карточками */
+}
+
+.review-card {
+  box-sizing: border-box;
+  width: 450px;
+  min-height: 294px;
+  padding: 46px 46px 32px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 30.5px;
+}
+
+.review-card__text {
+  font-family: "Comfortaa", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 28px;
+  color: #FFFFFF;
+  margin: 0 0 44px 0;
+}
+
+.review-card__footer {
+  display: flex;
+  align-items: center;
+  gap: 19px;
+  margin-top: auto;
+}
+
+.review-card__avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.25);
+  font-family: "Comfortaa", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 20px;
+  color: #FFFFFF;
+}
+
+.review-card__name {
+  font-family: "Comfortaa", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 20px;
+  color: #FFFFFF;
+  margin-bottom: 9px;
+}
+
+.review-card__role {
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* адаптив */
+@media (max-width: 1500px) {
+  .reviews__grid {
+    grid-template-columns: repeat(3, minmax(320px, 450px));
+    gap: 32px;
+  }
+  .review-card {
+    width: auto;
+  }
+}
+
+@media (max-width: 1100px) {
+  .reviews__grid {
+    grid-template-columns: 1fr;
+    justify-content: center;
+    gap: 20px;
+  }
+}
+
+/* REVIEWS */
+.reviews{
+  position: relative;
+  background: #0038FF;
+  overflow: hidden;
+  min-height: 679px;
+}
+
+/* две SVG-иконки (в каждой по 2 кавычки) */
+.reviews__quote{
+  position: absolute;
+  top: -19px;
+  width: 139px;
+  height: 122px;
+  opacity: 1;          /* ВАЖНО: opacity тут не “усилит” fill-opacity внутри SVG */
+  pointer-events: none;
+  user-select: none;
+}
+.reviews__quote--left{ left: 48px; }
+.reviews__quote--right{ right: 48px; }
+
+/* контейнер как в макете: левый отступ 235, контент 3 карточки по 450 + gap 50 */
+.reviews__container{
+  max-width: 1450px;          /* 450*3 + 50*2 */
+  margin: 0 auto;
+  padding: 113px 20px 80px;   /* y=113 из фигмы + нижний запас */
+  position: relative;
+}
+
+.reviews__kicker{
+  font-family: 'Comfortaa', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 34px; /* 164-113=51, но визуально ближе так; подгони если надо */
+}
+
+.reviews__title{
+  font-family: 'Comfortaa', sans-serif;
+  font-weight: 700;
+  font-size: 64px;
+  line-height: 72px;
+  color: #FFFFFF;
+  margin: 0 0 48px;  /* до карточек */
+}
+
+/* карточки */
+.reviews__grid{
+  display: grid;
+  grid-template-columns: repeat(3, 450px);
+  gap: 50px;
+}
+
+.review-card{
+  box-sizing: border-box;
+  height: 294px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 30.5px;
+  padding: 50px 46px 0; /* (x=46, y=50) как в фигме */
+}
+
+.review-card__text{
+  margin: 0 0 34px;
+  width: 358px;
+  font-family: 'Comfortaa', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 28px;
+  color: #FFFFFF;
+}
+
+.review-card__footer{
+  display: flex;
+  align-items: center;
+  gap: 19px;
+  margin-top: auto;
+}
+
+.review-card__avatar{
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  display: grid;
+  place-items: center;
+
+  font-family: 'Comfortaa', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 20px;
+  color: #FFFFFF;
+}
+
+.review-card__name{
+  font-family: 'Comfortaa', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 20px;
+  color: #FFFFFF;
+  margin-bottom: 6px;
+}
+
+.review-card__role{
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  color: rgba(255,255,255,0.5);
+}
+
+/* адаптация */
+@media (max-width: 1500px){
+  .reviews__grid{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .review-card{ height: auto; min-height: 294px; }
+  .review-card__text{ width: auto; }
+}
+@media (max-width: 1024px){
+  .reviews__title{ font-size: 42px; line-height: 48px; }
+  .reviews__grid{ grid-template-columns: 1fr; }
+}
+
+/*
+ВАЖНО ПРО “НЕ ВИДНО SVG”:
+Если в твоём assets/reviews/иллюстрация.svg у path стоит fill-opacity="0.05",
+то CSS не сможет “сделать ярче” — это зашито внутри файла.
+Решение: открыть SVG и поднять fill-opacity (например до 0.12–0.2) у обоих <path>.
+*/
+
+.prices{
+  position: relative;
+  overflow: visible; /* декор не режем */
+  padding-top: clamp(34px, 3.2vw, 60px); /* прайс-лист чуть выше */
+  padding-bottom: clamp(84px, 7vw, 132px); /* дистанция до roadmap */
+  --prices-gutter: calc((100vw - min(1360px, 100vw - 48px)) / 2);
+  --prices-side-pad: 24px;
+  --prices-decor-size: clamp(86px, 8.4vw, 140px);
+  --prices-decor-gap: 16px;
+}
+
+
+.prices__clip{
+  overflow: visible; /* было hidden */
+  position: relative;
+  z-index: 2;
+}
+
+/* 3) контейнер */
+/* контент выше декора */
+.prices__container{
+  position: relative;
+  z-index: 2;
+  max-width: 1360px;     /* важно */
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* заголовок как отдельный блок с запасом */
+.prices__head{
+  position: relative;
+  z-index: 2;
+  margin-bottom: clamp(36px, 3.6vw, 64px); /* было меньше */
+}
+
+.prices__kicker{
+  font-family: Comfortaa, sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  color: #0038FF;
+  margin-bottom: 14px;
+}
+
+.prices__title{
+  font-family: Comfortaa, sans-serif;
+  font-weight: 700;
+  font-size: clamp(34px, 3.2vw, 58px);
+  line-height: 1.05;
+  color: #0A0A0A;
+  margin: 0 0 clamp(28px, 3vw, 44px);
+}
+.prices__title span{ color:#0038FF; }
+
+.prices__grid{
+  display: grid;
+  column-gap: clamp(24px, 2.2vw, 40px);
+  row-gap: clamp(22px, 2.0vw, 36px);
+  justify-content: center;
+  grid-template-columns: repeat(4, minmax(0, 305px));
+}
+
+
+
+
+@media (max-width: 1359px){
+  .prices__grid{ grid-template-columns: repeat(3, minmax(0, 305px)); }
+}
+
+
+@media (max-width: 1023px){
+  .prices__grid{ grid-template-columns: repeat(2, minmax(0, 305px)); }
+}
+
+@media (min-width: 1280px){
+  .prices__grid{ justify-content: start; }
+}
+
+
+
+.price-card{
+  width: 100%;
+  max-width: 305px;
+  box-sizing: border-box;
+  border: 1px solid #BBC2CF;
+  border-radius: 30.5px;
+  background: #fff;
+  padding: 22px 22px 18px;
+  min-height: 341px;
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto auto;
+  gap: 12px;
+}
+
+/* активная карточка как у "Дизайн одежды" */
+.price-card.is-active{
+  border: 2px solid #0038FF;
+  box-shadow: 0 0 100px rgba(0,56,255,.1);
+}
+
+/* иконка (твоя price-icon.webp) */
+.price-card__icon{
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  background: #E5EBFF url("assets/prices/price-icon.webp") center/contain no-repeat;
+}
+
+/* тексты */
+.price-card__name{
+  margin: 0;
+  font-family: Comfortaa, sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 27px;
+  color: #0A0A0A;
+}
+
+.price-card__desc{
+  margin: 0;
+  font-family: Comfortaa, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #5E5E5E;
+  max-width: 245px; /* как в фигме */
+}
+
+.price-card__price{
+  font-family: Comfortaa, sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 20px;
+  color: #0038FF;
+}
+
+.price-card__time{
+  font-family: Comfortaa, sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 20px;
+  color: #5E5E5E;
+}
+
+.prices .prices__decor{
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+  display: block;
+  width: var(--prices-decor-size);
+  aspect-ratio: 171 / 211;
+  background: url("assets/prices/приствка кайтеки 1.webp") center/contain no-repeat;
+}
+
+/* контент поверх декора */
+.prices__kicker,
+.prices__title,
+.prices__head,
+.prices__grid{ position: relative; z-index: 2; }
+
+.prices .prices__decor--tl{
+  left: max(-120px, calc(var(--prices-gutter) + var(--prices-side-pad) - var(--prices-decor-size) - var(--prices-decor-gap)));
+  top: clamp(-28px, -1.2vw, -10px);
+  transform: rotate(10.99deg) scaleX(-1);
+}
+
+.prices .prices__decor--br{
+  right: max(-120px, calc(var(--prices-gutter) + var(--prices-side-pad) - var(--prices-decor-size) - var(--prices-decor-gap)));
+  bottom: clamp(4px, 1vw, 24px);
+  transform: rotate(10.99deg);
+}
+
+@media (min-width: 1280px){
+  .prices{
+    --prices-decor-size: clamp(160px, 11vw, 210px);
+    --prices-decor-gap: 24px;
+  }
+  .prices .prices__decor--tl{
+    top: clamp(-20px, -0.8vw, 2px);
+  }
+  .prices .prices__decor--br{
+    bottom: clamp(-24px, calc(1.2vw - 32px), -4px);
+  }
+}
+
+
+/* ROADMAP */
+.roadmap{
+  background: #F5F5F7;
+  padding: clamp(72px, 7vw, 118px) 0 clamp(58px, 6vw, 96px);
+}
+
+.roadmap__container{
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.roadmap__kicker{
+  font-family: Comfortaa, sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: .1em;
+  color: #0038FF;
+  margin-bottom: 14px;
+}
+
+.roadmap__title{
+  font-family: Comfortaa, sans-serif;
+  font-weight: 700;
+  font-size: clamp(34px, 3.2vw, 58px);
+  line-height: 1.05;
+  margin: 0 0 clamp(36px, 4vw, 64px);
+  color: #0A0A0A;
+}
+.roadmap__title span{ color:#0038FF; }
+
+/* трек */
+.roadmap__track{
+  --roadmap-gap: clamp(18px, 2vw, 36px);
+  --roadmap-step-w: 270px;
+  --roadmap-dot: 99px;
+  --roadmap-active-dot: 129px;
+  --roadmap-line-thickness: 3px;
+  --roadmap-line-y: calc(18px + (var(--roadmap-dot) / 2));
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, var(--roadmap-step-w)));
+  justify-content: center;
+  column-gap: var(--roadmap-gap);
+  row-gap: clamp(24px, 3vw, 44px);
+  padding-top: 18px; /* чтобы линия проходила через центры кружков */
+}
+
+/* линия */
+.roadmap__line{
+  position: absolute;
+  z-index: 0;
+  left: calc(var(--roadmap-step-w) / 2);
+  right: calc(var(--roadmap-step-w) / 2);
+  top: var(--roadmap-line-y);
+  height: var(--roadmap-line-thickness);
+  transform: translateY(-50%);
+  border-radius: 999px;
+  background: #E5EBFF;
+}
+
+/* элементы шага — выше линии */
+.step{
+  position: relative;
+  width: 100%;
+  text-align: center;
+  max-width: none;
+}
+
+
+/* локальные сегменты выключаем: используем цельную линию roadmap__line */
+.step::after{
+  display: none;
+}
+
+
+/* последний шаг без линии */
+.step:last-child::after{ display:none; }
+
+/* кружки поверх линии */
+.step__dot{
+  position: relative;
+  z-index: 2;              /* на всякий */
+  width: var(--roadmap-dot);
+  height: var(--roadmap-dot);
+  margin: 0 auto 22px;
+  border-radius: 999px;
+  background: #fff;
+  border: 3px solid #0038FF;
+  display: grid;
+  place-items: center;
+}
+
+
+.step__dot span{
+  font-family: Manrope, sans-serif;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 1;
+  color: #0038FF;
+}
+
+.step__title{
+  margin: 0 0 10px;
+  font-family: Comfortaa, sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 27px;
+  color: #0A0A0A;
+}
+
+.step__desc{
+  margin: 0;
+  font-family: Comfortaa, sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 20px;
+  color: #5E5E5E;
+}
+
+/* активный (04) */
+.step--active .step__dot{
+  width: var(--roadmap-active-dot);
+  height: var(--roadmap-active-dot);
+  margin-top: 0;
+  transform: translateY(-15px); /* выравниваем центр большого кружка по линии */
+  background: #0038FF;
+  border-color: #0038FF;
+  margin-bottom: 7px;
+}
+.step--active .step__dot span{
+  font-size: 48px;
+  color: #fff;
+}
+
+/* Ноут: 3 в ряд */
+@media (max-width: 1359px){
+  .roadmap__track{
+    grid-template-columns: repeat(3, minmax(0, 270px));
+    justify-content: center;
+  }
+  .roadmap__line{ display:none; }
+  .step::after{ display:none; }
+}
+
+/* Планшет: 2 в ряд */
+@media (max-width: 1023px){
+  .roadmap__track{
+    grid-template-columns: repeat(2, minmax(0, 270px));
+  }
+  .roadmap__line{ display:none; }
+  .step::after{ display:none; }
+}
+
+
+/* FAQ */
+.faq{
+  position: relative;
+  background: #fff;
+  padding: clamp(56px, 6vw, 96px) 0;
+  overflow: hidden;
+}
+
+.faq__decor{
+  position: absolute;
+  top: clamp(-148px, -9vw, -78px);
+  right: clamp(-168px, -12vw, -90px);
+  width: clamp(244px, 20vw, 352px);
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  transform: rotate(-112.5deg);
+  transform-origin: 72% 34%;
+}
+
+.faq__container{
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.faq__kicker{
+  font-family: Comfortaa, sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: .1em;
+  color: #0038FF;
+  margin-bottom: 14px;
+}
+
+.faq__title{
+  width: auto;
+  height: clamp(34px, 3.2vw, 58px);
+  margin: 0 0 clamp(36px, 4vw, 64px);
+  display: block;
+}
+
+.faq__grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.faq__col{
+  display:grid;
+  gap: 30px;
+}
+
+.faq-item{
+  background:#F5F5F7;
+  border-radius:25px;
+  padding: 26px 28px;
+}
+
+.faq-item__row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 16px;
+}
+
+.faq-item__q{
+  font-family: Comfortaa, sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 20px;
+  color:#0A0A0A;
+}
+
+/* иконка по дефолту: плюс */
+.faq-item__icon{
+  width:28px;
+  height:28px;
+  border-radius:999px;
+  background:#fff;
+  position:relative;
+  flex: 0 0 28px;
+}
+.faq-item__icon::before,
+.faq-item__icon::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:12px;
+  height:2px;
+  background:#0038FF;
+  transform:translate(-50%,-50%);
+  border-radius:2px;
+}
+.faq-item__icon::after{
+  width:2px;
+  height:12px;
+}
+
+/* открытые: синяя рамка + крест */
+.faq-item.is-open{
+  border: 1px solid #0038FF;
+}
+.faq-item.is-open .faq-item__icon{
+  background:#0038FF;
+}
+.faq-item.is-open .faq-item__icon::before,
+.faq-item.is-open .faq-item__icon::after{
+  width: 12px;
+  height: 2px;
+  background:#fff;
+}
+.faq-item.is-open .faq-item__icon::before{
+  transform: translate(-50%,-50%);
+}
+.faq-item.is-open .faq-item__icon::after{
+  display: none;
+}
+
+/* панель текста есть только у is-open */
+.faq-item__panel{
+  margin-top: 18px;
+  font-family: Comfortaa, sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 25px;
+  color:#5E5E5E;
+}
+
+/* если случайно у закрытых будет panel — скрываем */
+.faq-item:not(.is-open) .faq-item__panel{ display:none; }
+
+@media (max-width: 1023px){
+  .faq__grid{ grid-template-columns: 1fr; }
+  .faq__decor{ display: none; }
+}
+
+
+
+/* CONTACT */
+.contact{
+  position: relative;
+  background: #0A0A0A;
+  padding: clamp(72px, 7vw, 120px) 0;
+  overflow: clip; /* чтобы декор не создавал горизонтальный скролл */
+}
+
+.contact__container{
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+}
+
+.contact__stage{
+  position: relative;
+  width: min(1024px, 100%);
+  min-height: 458px;
+}
+
+/* карточка */
+.contact__card{
+  width: 100%;
+  min-height: 458px;
+  background: #161616;
+  border: 1px solid #3F3F3F;
+  border-radius: 25px;
+  padding: 60px 48px;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 18px;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 2;
+}
+
+/* плашка */
+.contact__pill{
+  height: 39px;
+  padding: 0 18px;
+  border-radius: 25px;
+  background: #E5EBFF;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  font-family: Comfortaa, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: .05em;
+  color: #0038FF;
+}
+.contact__dot{
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #0038FF;
+}
+
+/* заголовок */
+.contact__title{
+  margin: 10px 0 0;
+  width: min(740px, 100%);
+}
+
+.contact__title img{
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* подзаголовок */
+.contact__subtitle{
+  margin: 0;
+  max-width: 633px;
+  font-family: Comfortaa, sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 25px;
+  color: #BABABA;
+}
+
+/* кнопка ТГ */
+.contact__tg{
+  margin-top: 8px;
+  width: 253px;
+  height: 78px;
+  border-radius: 15px;
+  background: #0038FF;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.contact__tg-ic{
+  width: 50px;
+  height: 50px;
+  border-radius: 7px;
+  background: rgba(255,255,255,.15);
+  position: relative;
+  flex: 0 0 50px;
+}
+
+/* простая “иконка телеги” без svg */
+.contact__tg-ic::before{
+  content:"";
+  position:absolute;
+  left: 45%;
+  top: 56%;
+  width: 11px;
+  height: 2px;
+  border-radius: 2px;
+  background: #FFFFFF;
+  transform: translate(-50%, -50%) rotate(-18deg);
+}
+.contact__tg-ic::after{
+  content:"";
+  position:absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 14px solid #FFFFFF;
+  transform: translate(-42%,-52%) rotate(-18deg);
+}
+
+/* иконка без внешнего файла — чтобы не было CORS/404 при локальном запуске */
+
+.contact__tg-text{
+  font-family: Comfortaa, sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 22px;
+  color: #FFFFFF;
+}
+
+/* декор */
+.contact__decor{
+  position: absolute;
+  pointer-events: none;
+  z-index: 3;
+  filter: drop-shadow(0 20px 40px rgba(0,0,0,.45));
+}
+
+.contact__decor--mac{
+  right: clamp(-220px, -15vw, -120px);
+  top: clamp(-182px, -12vw, -96px);
+  width: clamp(320px, 34vw, 500px);
+  transform: rotate(-6.2deg);
+}
+
+.contact__decor--folder{
+  left: clamp(-138px, -9vw, -76px);
+  bottom: clamp(-132px, -10vw, -76px);
+  width: clamp(190px, 18vw, 261px);
+  transform: rotate(-8deg);
+}
+
+/* планшет: декор можно чуть спрятать */
+@media (max-width: 1023px){
+  .contact__card{ padding: 52px 28px; }
+  .contact__decor--mac{
+    right: clamp(-82px, -10vw, -28px);
+    top: clamp(-92px, -9vw, -34px);
+    width: clamp(190px, 42vw, 280px);
+  }
+  .contact__decor--folder{
+    left: clamp(-58px, -8vw, -16px);
+    bottom: clamp(-88px, -10vw, -30px);
+    width: clamp(130px, 30vw, 190px);
+    transform: rotate(-8deg);
+  }
+}
+
+/* FOOTER */
+.footer{
+  background:#0A0A0A;
+  border-top: 1px solid #1F1F1F;
+  height: 90px;
+  display: grid;
+  align-items: center;
+}
+
+.footer__container{
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 24px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer__logo{
+  width: 155px;
+  height: auto;
+  display:block;
+}
+
+.footer__copy{
+  font-family: Comfortaa, sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 13px;
+  color: #F5F5F7;
+}
+
+@media (max-width: 768px){
+  .container{
+    padding: 0 15px;
+  }
+
+  .header-inner{
+    height: 68px;
+  }
+
+  .brand-logo{
+    width: 42px;
+    height: 42px;
+  }
+
+  .mobile-menu{
+    padding: 12px 15px 16px;
+  }
+
+  .hero{
+    min-height: 460px;
+  }
+
+  .hero .prices__decor{
+    display: none;
+  }
+
+  .about{
+    --s: 1;
+    height: auto;
+    min-height: 0;
+    padding: 56px 0 64px;
+  }
+
+  .about-core{
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    height: auto;
+    transform: none;
+    padding: 0 15px;
+    display: grid;
+    gap: 22px;
+  }
+
+  .about-promo{
+    position: relative;
+    left: auto;
+    top: auto;
+    width: min(360px, 100%);
+    height: auto;
+    margin: 0 auto;
+  }
+
+  .about-figure{
+    left: auto;
+    right: -10px;
+    top: 18px;
+    width: 68px;
+    height: auto;
+    transform: rotate(12deg);
+  }
+
+  .about-text{
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    height: auto;
+    padding-top: 6px;
+  }
+
+  .about-tag{
+    font-size: 10px;
+    line-height: 11px;
+    margin-bottom: 10px;
+  }
+
+  .about-title{
+    width: min(260px, 100%);
+    height: auto;
+    margin: 0 0 12px;
+  }
+
+  .about-p{
+    margin: 0 0 12px;
+    font-size: 14px;
+    line-height: 22px;
+  }
+
+  .about-divider{
+    width: 100%;
+    margin-top: 16px;
+  }
+
+  .about-stats{
+    margin-top: 14px;
+    gap: 0;
+    justify-content: space-between;
+  }
+
+  .stat-num{
+    font-size: 44px;
+    line-height: 1;
+  }
+
+  .stat-label{
+    font-size: 12px;
+    line-height: 14px;
+  }
+
+  .services{
+    padding: 56px 0 64px;
+  }
+
+  .services-container{
+    padding: 0 15px;
+  }
+
+  .services-head{
+    margin-bottom: 18px;
+  }
+
+  .services-tag{
+    font-size: 10px;
+    line-height: 11px;
+    margin-bottom: 10px;
+  }
+
+  .services-title{
+    font-size: 38px;
+  }
+
+  .services-grid{
+    gap: 16px;
+  }
+
+  .service-card{
+    border-radius: 20px;
+    padding: 24px 18px 18px;
+  }
+
+  .service-icon{
+    width: 46px;
+    height: 52px;
+    margin-bottom: 14px;
+  }
+
+  .service-name{
+    margin-bottom: 10px;
+    font-size: 26px;
+    line-height: 1.05;
+  }
+
+  .service-desc{
+    margin-bottom: 12px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .service-list li{
+    padding: 10px 0 10px 18px;
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .service-list li::before{
+    top: 16px;
+  }
+
+  .service-foot{
+    padding-top: 14px;
+    font-size: 10px;
+    line-height: 14px;
+  }
+
+  .portfolio{
+    padding: 56px 0 64px;
+  }
+
+  .portfolio-container{
+    padding: 0 15px;
+  }
+
+  .portfolio-head{
+    margin-bottom: 20px;
+  }
+
+  .portfolio-tag{
+    font-size: 10px;
+    line-height: 11px;
+    margin-bottom: 10px;
+  }
+
+  .portfolio-title{
+    height: auto;
+    max-width: min(260px, 100%);
+  }
+
+  .portfolio-grid{
+    gap: 14px;
+  }
+
+  .work-card{
+    border-radius: 20px;
+  }
+
+  .work-ai-text{
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+  }
+
+  .work-ai-title{
+    margin-bottom: 8px;
+    font-size: 24px;
+    line-height: 26px;
+  }
+
+  .work-ai-sub{
+    font-size: 12px;
+    line-height: 14px;
+  }
+
+  .reviews{
+    padding: 56px 0 64px;
+    min-height: 0;
+  }
+
+  .reviews__quote{
+    display: none;
+  }
+
+  .reviews__container{
+    width: 100%;
+    padding: 0 15px;
+  }
+
+  .reviews__head{
+    margin-bottom: 20px;
+  }
+
+  .reviews__kicker{
+    font-size: 10px;
+    line-height: 11px;
+    margin-bottom: 10px;
+  }
+
+  .reviews__title{
+    margin: 0 0 20px;
+    font-size: 38px;
+    line-height: 1.05;
+  }
+
+  .reviews__grid{
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .review-card{
+    min-height: 0;
+    border-radius: 20px;
+    padding: 22px 18px 18px;
+  }
+
+  .review-card__text{
+    margin: 0 0 18px;
+    font-size: 15px;
+    line-height: 22px;
+  }
+
+  .review-card__name{
+    font-size: 15px;
+    line-height: 18px;
+  }
+
+  .review-card__role{
+    font-size: 12px;
+    line-height: 14px;
+  }
+
+  .prices{
+    --prices-side-pad: 15px;
+    --prices-decor-size: 92px;
+    --prices-decor-gap: 8px;
+    padding-top: 42px;
+    padding-bottom: 72px;
+  }
+
+  .prices__container{
+    padding: 0 15px;
+  }
+
+  .prices__kicker{
+    font-size: 10px;
+    line-height: 11px;
+    margin-bottom: 10px;
+  }
+
+  .prices__title{
+    height: auto;
+    max-width: min(300px, 100%);
+    margin: 0 0 22px;
+  }
+
+  .prices__grid{
+    grid-template-columns: 1fr;
+    justify-content: stretch;
+    gap: 14px;
+  }
+
+  .price-card{
+    max-width: none;
+    min-height: 305px;
+    border-radius: 22px;
+    padding: 18px;
+  }
+
+  .price-card__icon{
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+  }
+
+  .price-card__name{
+    font-size: 22px;
+    line-height: 1.1;
+  }
+
+  .price-card__desc{
+    max-width: none;
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .price-card__price{
+    font-size: 26px;
+    line-height: 1.1;
+  }
+
+  .price-card__time{
+    font-size: 11px;
+    line-height: 16px;
+  }
+
+  .prices .prices__decor--tl{
+    left: -18px;
+    top: -32px;
+  }
+
+  .prices .prices__decor--br{
+    right: -14px;
+    bottom: 6px;
+  }
+
+  .roadmap{
+    padding: 68px 0 56px;
+  }
+
+  .roadmap__container{
+    padding: 0 15px;
+  }
+
+  .roadmap__kicker{
+    font-size: 10px;
+    line-height: 11px;
+    margin-bottom: 10px;
+  }
+
+  .roadmap__title{
+    margin: 0 0 22px;
+    font-size: clamp(34px, 10vw, 52px);
+  }
+
+  .roadmap__track{
+    grid-template-columns: 1fr;
+    row-gap: 18px;
+    padding-top: 0;
+  }
+
+  .roadmap__line{
+    display: none;
+  }
+
+  .step{
+    max-width: 340px;
+    margin: 0 auto;
+    padding: 18px 14px 14px;
+    border: 1px solid #BBC2CF;
+    border-radius: 22px;
+    background: #FFFFFF;
+  }
+
+  .step__dot{
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 12px;
+    border-width: 2px;
+  }
+
+  .step__dot span{
+    font-size: 30px;
+  }
+
+  .step--active{
+    border-color: #0038FF;
+  }
+
+  .step--active .step__dot{
+    width: 86px;
+    height: 86px;
+    transform: none;
+    margin-bottom: 10px;
+  }
+
+  .step__title{
+    margin: 0 0 8px;
+    font-size: 22px;
+    line-height: 1.05;
+  }
+
+  .step__desc{
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 500;
+  }
+
+  .faq{
+    padding: 56px 0 64px;
+  }
+
+  .faq__container{
+    padding: 0 15px;
+  }
+
+  .faq__kicker{
+    font-size: 10px;
+    line-height: 11px;
+    margin-bottom: 10px;
+  }
+
+  .faq__title{
+    height: auto;
+    max-width: min(300px, 100%);
+    margin: 0 0 22px;
+  }
+
+  .faq__grid{
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .faq__col{
+    gap: 12px;
+  }
+
+  .faq-item{
+    border-radius: 18px;
+    padding: 18px 16px;
+  }
+
+  .faq-item__q{
+    font-size: 16px;
+    line-height: 18px;
+  }
+
+  .faq-item__icon{
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+  }
+
+  .faq-item__panel{
+    margin-top: 12px;
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  .faq__decor{
+    display: none;
+  }
+
+  .contact{
+    padding: 66px 0 56px;
+  }
+
+  .contact__container{
+    padding: 0 15px;
+  }
+
+  .contact__stage{
+    width: 100%;
+    min-height: 0;
+  }
+
+  .contact__card{
+    min-height: 420px;
+    border-radius: 22px;
+    padding: 42px 18px 28px;
+    gap: 14px;
+  }
+
+  .contact__pill{
+    height: 34px;
+    padding: 0 14px;
+    font-size: 12px;
+  }
+
+  .contact__title{
+    width: min(330px, calc(100% - 8px));
+  }
+
+  .contact__subtitle{
+    max-width: 320px;
+    font-size: 15px;
+    line-height: 21px;
+  }
+
+  .contact__tg{
+    width: 228px;
+    height: 68px;
+    padding: 10px 14px;
+    gap: 10px;
+  }
+
+  .contact__tg-ic{
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+  }
+
+  .contact__tg-text{
+    font-size: 18px;
+    line-height: 20px;
+  }
+
+  .contact__decor--mac{
+    right: -28px;
+    top: -80px;
+    width: min(220px, 58vw);
+  }
+
+  .contact__decor--folder{
+    left: -30px;
+    bottom: -52px;
+    width: min(150px, 40vw);
+  }
+
+  .footer{
+    height: 74px;
+  }
+
+  .footer__container{
+    padding: 0 15px;
+    gap: 12px;
+  }
+
+  .footer__logo{
+    width: 108px;
+  }
+
+  .footer__copy{
+    text-align: right;
+    font-size: 10px;
+    line-height: 12px;
+  }
+}

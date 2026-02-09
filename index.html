@@ -1,0 +1,689 @@
+<!-- index.html -->
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kayteki</title>
+    <script>
+      (function () {
+        function redirectToMobileIfNeeded() {
+          if (!window.matchMedia("(max-width: 768px)").matches) return;
+          var path = String(window.location.pathname || "").replace(/\\/g, "/");
+          if (/\/mobile\/index\.html$/i.test(path) || /\/mobile\/$/i.test(path)) return;
+          var target = new URL("./mobile/index.html", window.location.href);
+          target.search = window.location.search;
+          target.hash = window.location.hash;
+          window.location.replace(target.href);
+        }
+        try {
+          redirectToMobileIfNeeded();
+          window.addEventListener("resize", redirectToMobileIfNeeded, { passive: true });
+          window.addEventListener("orientationchange", redirectToMobileIfNeeded, { passive: true });
+        } catch (_) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="#home" aria-label="Kayteki">
+          <img src="./assets/header/header-icon.webp" alt="" class="brand-logo" />
+        </a>
+
+        <nav class="nav" aria-label="Основная навигация">
+          <a class="nav-link" href="#about">Обо мне</a>
+          <a class="nav-link" href="#services">Услуги</a>
+          <a class="nav-link" href="#works">Работы</a>
+          <a class="nav-link" href="#contact">Контакты</a>
+        </nav>
+
+        <a class="header-cta" href="#contact">Связаться</a>
+
+        <button class="burger" type="button" aria-label="Открыть меню" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+
+      <div class="mobile-menu" aria-hidden="true">
+        <a href="#about">Обо мне</a>
+        <a href="#services">Услуги</a>
+        <a href="#works">Работы</a>
+        <a href="#contact">Контакты</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="home">
+        <!-- ВАЖНО: hero-core — это “канвас 1920×950”, который мы масштабирем -->
+        <div class="hero-core" role="presentation">
+          <!-- Декор фона -->
+          <div class="bg-ellipse-outline" aria-hidden="true"></div>
+          <div class="bg-ellipse-fill" aria-hidden="true"></div>
+          <div class="bg-diamond" aria-hidden="true"></div>
+
+          <!-- Шары -->
+          <img class="ball ball-left" src="./assets/hero/ШАР%20ЛОГО%202.webp" alt="" aria-hidden="true" />
+          <img class="ball ball-right" src="./assets/hero/ШАР%20ЛОГО%202.webp" alt="" aria-hidden="true" />
+
+          <!-- Контент -->
+          <div class="status-badge" aria-label="Открыт для проектов">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span class="status-text">Открыт для проектов</span>
+          </div>
+
+          <div class="logo-wrap" aria-label="Kayteki">
+            <img class="logo-blur" src="./assets/hero/лого.webp" alt="" aria-hidden="true" />
+            <img class="logo-main" src="./assets/hero/лого.webp" alt="Kayteki" />
+          </div>
+
+          <p class="hero-subtitle">Бюро образов и графических решений</p>
+
+          <a class="hero-cta" href="#contact">
+            <span>Обсудить проект</span>
+            <svg class="cta-arrow" width="13" height="10" viewBox="0 0 13 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M8.138 0.75L12 4.75L8.138 8.75" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M12 4.75H1" stroke="white" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+          </a>
+
+          <div class="scroll-hint" aria-hidden="true">
+            <div class="scroll-text">Прокрутите, чтобы изучить</div>
+            <div class="scroll-line"></div>
+          </div>
+        </div>
+        <div class="prices__decor prices__decor--tl" aria-hidden="true"></div>
+        <div class="prices__decor prices__decor--br" aria-hidden="true"></div>
+      </section>
+
+      <!-- дальше твои секции -->
+      <section class="about" id="about">
+        <div class="about-core">
+          <!-- левая карточка/промо -->
+          <div class="about-promo">
+            <img
+              class="about-promo-img"
+              src="./assets/about/ПРОМО КАЙТЕКИв2 1.webp"
+              alt="Промо Кайтоки"
+              loading="lazy"
+            />
+          </div>
+
+          <!-- 3D модель справа сверху -->
+          <img
+            class="about-figure"
+            src="./assets/about/3д модель кайтеки 3.webp"
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+          />
+
+          <!-- правая колонка с текстом -->
+          <div class="about-text">
+            <div class="about-tag">ОБО МНЕ</div>
+
+            <img class="about-title" src="./assets/about/Привет, я ЭД.svg" alt="Привет, я ЭД" loading="lazy">
+
+            <p class="about-p">
+              Графический дизайнер с 5+ летним опытом создания визуальных решений для бизнеса.
+              Специализируюсь на брендинге, веб-дизайне и упаковке. Моя цель — создавать дизайн,
+              который не просто красиво выглядит, но и решает задачи бизнеса.
+            </p>
+
+            <p class="about-p">
+              Создаю визуальные конструкции для брендов. Люблю минимализм за честность и тишину,
+              в которой дизайн начинает говорить. Каждый проект — это поиск интонации бренда и перевод
+              её на визуальный язык.
+            </p>
+
+            <div class="about-divider" aria-hidden="true"></div>
+
+            <div class="about-stats">
+              <div class="stat">
+                <div class="stat-num">150+</div>
+                <div class="stat-label">Проектов</div>
+              </div>
+              <div class="stat">
+                <div class="stat-num">5+</div>
+                <div class="stat-label">Лет опыта</div>
+              </div>
+              <div class="stat">
+                <div class="stat-num">70+</div>
+                <div class="stat-label">Клиентов</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="prices__decor prices__decor--tl" aria-hidden="true"></div>
+        <div class="prices__decor prices__decor--br" aria-hidden="true"></div>
+      </section>
+
+      <section class="services" id="services">
+        <div class="services-container">
+          <div class="services-head">
+            <div class="services-tag">УСЛУГИ</div>
+            <h2 class="services-title">Наши <span class="accent">услуги</span></h2>
+          </div>
+
+          <div class="services-grid">
+            <!-- 1 -->
+            <article class="service-card">
+              <img class="service-icon" src="./assets/services/service-icon.webp" alt="" aria-hidden="true" loading="lazy">
+
+              <h3 class="service-name">Брендинг</h3>
+              <p class="service-desc">
+                Разработка визуальной идентичности бренда от концепции до брендбука
+              </p>
+
+              <ul class="service-list">
+                <li>Логотип и фирменный знак</li>
+                <li>Цветовая палитра</li>
+                <li>Типографика</li>
+                <li>Брендбук</li>
+              </ul>
+
+              <div class="service-foot">ДЛЯ СТАРТАПОВ И БИЗНЕСОВ</div>
+            </article>
+
+            <!-- 2 (выделенная как hover/active в фигме) -->
+            <article class="service-card service-card--featured">
+              <div class="service-topline" aria-hidden="true"></div>
+
+              <img class="service-icon" src="./assets/services/service-icon.webp" alt="" aria-hidden="true" loading="lazy">
+
+              <h3 class="service-name">Упаковка</h3>
+              <p class="service-desc">
+                Дизайн упаковки, который выделяет продукт на полке
+              </p>
+
+              <ul class="service-list">
+                <li>Концепция упаковки</li>
+                <li>3D визуализация</li>
+                <li>Подготовка к печати</li>
+                <li>Этикетки и стикеры</li>
+              </ul>
+
+              <div class="service-foot">ДЛЯ FMCG И ПРОИЗВОДСТВ</div>
+            </article>
+
+            <!-- 3 -->
+            <article class="service-card">
+              <img class="service-icon" src="./assets/services/service-icon.webp" alt="" aria-hidden="true" loading="lazy">
+
+              <h3 class="service-name">Полиграфия</h3>
+              <p class="service-desc">
+                Визитки, каталоги, буклеты и другая печатная продукция
+              </p>
+
+              <ul class="service-list">
+                <li>Визитки и бланки</li>
+                <li>Каталоги и буклеты</li>
+                <li>Плакаты и баннеры</li>
+                <li>Меню и флаеры</li>
+              </ul>
+
+              <div class="service-foot">ДЛЯ OFFLINE-БИЗНЕСА</div>
+            </article>
+
+            <!-- 4 -->
+            <article class="service-card">
+              <img class="service-icon" src="./assets/services/service-icon.webp" alt="" aria-hidden="true" loading="lazy">
+
+              <h3 class="service-name">Монтаж</h3>
+              <p class="service-desc">
+                Монтаж рилсов, длинных видеороликов и любой другой формат
+              </p>
+
+              <ul class="service-list">
+                <li>Монтаж для соцсетей</li>
+                <li>Цветокоррекция и цветокор</li>
+                <li>Монтаж клипов</li>
+              </ul>
+
+              <div class="service-foot">ДЛЯ БИЗНЕСА И СПИКЕРОВ</div>
+            </article>
+
+            <!-- 5 -->
+            <article class="service-card">
+              <img class="service-icon" src="./assets/services/service-icon.webp" alt="" aria-hidden="true" loading="lazy">
+
+              <h3 class="service-name">Дизайн одежды</h3>
+              <p class="service-desc">
+                Визуальный контент для социальных сетей, который привлекает внимание
+              </p>
+
+              <ul class="service-list">
+                <li>Создание мокапа</li>
+                <li>Fashion дизайн</li>
+                <li>Streetwear дизайн</li>
+                <li>Редизайн / Апсайкл</li>
+              </ul>
+
+              <div class="service-foot">ДЛЯ БЛОГЕРОВ И БРЕНДОВ</div>
+            </article>
+
+            <!-- 6 -->
+            <article class="service-card">
+              <img class="service-icon" src="./assets/services/service-icon.webp" alt="" aria-hidden="true" loading="lazy">
+
+              <h3 class="service-name">Веб-дизайн</h3>
+              <p class="service-desc">
+                Современные и функциональные интерфейсы для сайтов и приложений
+              </p>
+
+              <ul class="service-list">
+                <li>UI/UX дизайн</li>
+                <li>Прототипирование</li>
+                <li>Адаптивный дизайн</li>
+                <li>Дизайн-система</li>
+              </ul>
+
+              <div class="service-foot">ДЛЯ DIGITAL-ПРОЕКТОВ</div>
+            </article>
+          </div>
+        </div>
+        <div class="prices__decor prices__decor--tl" aria-hidden="true"></div>
+        <div class="prices__decor prices__decor--br" aria-hidden="true"></div>
+      </section>
+
+      <section class="portfolio" id="works">
+        <div class="portfolio-container">
+          <div class="portfolio-head">
+            <div class="portfolio-tag">ПОРТФОЛИО</div>
+
+            <!-- Заголовок SVG из ассетов -->
+            <img
+              class="portfolio-title"
+              src="./assets/portfolio/Избранные работы.svg"
+              alt="Избранные работы"
+              loading="lazy"
+            />
+          </div>
+
+          <div class="portfolio-grid">
+            <!-- 1: одежда -->
+            <a class="work-card" href="#" aria-label="Одежда">
+              <img class="work-img" src="./assets/portfolio/пин одежда.webp" alt="" loading="lazy" />
+              <span class="work-overlay"></span>
+            </a>
+
+            <!-- 2: лого -->
+            <a class="work-card" href="#" aria-label="Логотипы">
+              <img class="work-img" src="./assets/portfolio/пин лого.webp" alt="" loading="lazy" />
+              <span class="work-overlay"></span>
+            </a>
+
+            <!-- 3: ИИ (особая карточка) -->
+            <a class="work-card work-card--ai" href="#" aria-label="ИИ работы">
+              <img class="work-img" src="./assets/portfolio/пин ии.webp" alt="" loading="lazy" />
+              <span class="work-overlay"></span>
+
+              <div class="work-ai-text">
+                <div class="work-ai-title">ИИ Работы</div>
+                <div class="work-ai-sub">Генерация контента под разные бизнесы</div>
+              </div>
+            </a>
+
+            <!-- 4: сайты -->
+            <a class="work-card" href="#" aria-label="Сайты">
+              <img class="work-img" src="./assets/portfolio/пин сайты.webp" alt="" loading="lazy" />
+              <span class="work-overlay"></span>
+            </a>
+
+            <!-- 5: постеры -->
+            <a class="work-card" href="#" aria-label="Постеры">
+              <img class="work-img" src="./assets/portfolio/пин постеры.webp" alt="" loading="lazy" />
+              <span class="work-overlay"></span>
+            </a>
+
+            <!-- 6: монтаж -->
+            <a class="work-card" href="#" aria-label="Монтаж">
+              <img class="work-img" src="./assets/portfolio/пин монтад.webp" alt="" loading="lazy" />
+              <span class="work-overlay"></span>
+            </a>
+          </div>
+        </div>
+        <div class="prices__decor prices__decor--tl" aria-hidden="true"></div>
+        <div class="prices__decor prices__decor--br" aria-hidden="true"></div>
+      </section>
+
+      <!-- REVIEWS / ОТЗЫВЫ -->
+      <section class="reviews" id="reviews">
+        <!-- фоновые кавычки (одна SVG содержит 2 кавычки, поэтому ставим 2 раза: слева и справа) -->
+        <img class="reviews__quote reviews__quote--left" src="./assets/reviews/иллюстрация.svg" alt="" aria-hidden="true" />
+        <img class="reviews__quote reviews__quote--right" src="./assets/reviews/иллюстрация.svg" alt="" aria-hidden="true" />
+
+        <div class="reviews__container">
+          <div class="reviews__head">
+            <div class="reviews__kicker">ОТЗЫВЫ</div>
+            <h2 class="reviews__title">Что говорят наши клиенты</h2>
+          </div>
+
+          <div class="reviews__grid">
+            <article class="review-card">
+              <p class="review-card__text">
+                «делал всё на высоком уровне, учёл все пожелания, качество отличное, работать комфортно, смело рекомендую.»
+              </p>
+
+              <div class="review-card__footer">
+                <div class="review-card__avatar" aria-hidden="true">Р</div>
+                <div class="review-card__meta">
+                  <div class="review-card__name">Раиз</div>
+                  <div class="review-card__role">Разработка логотипа под бренд одежды</div>
+                </div>
+              </div>
+            </article>
+
+            <article class="review-card">
+              <p class="review-card__text">
+                «Быстро отвечает на вопросы, а также выполняет работы в очень короткий период времени, при этом качество не теряется!»
+              </p>
+
+              <div class="review-card__footer">
+                <div class="review-card__avatar" aria-hidden="true">С</div>
+                <div class="review-card__meta">
+                  <div class="review-card__name">Сергей</div>
+                  <div class="review-card__role">Разработка дизайна под ключ</div>
+                </div>
+              </div>
+            </article>
+
+            <article class="review-card">
+              <p class="review-card__text">
+                «От души тебе за всё, ты создал просто кайфушку, от дизайна костюма, до логотипа. У тебя золотые руки брат»
+              </p>
+
+              <div class="review-card__footer">
+                <div class="review-card__avatar" aria-hidden="true">Р</div>
+                <div class="review-card__meta">
+                  <div class="review-card__name">Руслан</div>
+                  <div class="review-card__role">Разработка дизайна и логотипа</div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+        <div class="prices__decor prices__decor--tl" aria-hidden="true"></div>
+        <div class="prices__decor prices__decor--br" aria-hidden="true"></div>
+      </section>
+
+      <section class="prices" id="prices">
+        <div class="prices__clip">
+          <div class="prices__container">
+
+            <div class="prices__head">
+              <div class="prices__kicker">ПРАЙС-ЛИСТ</div>
+              <img class="prices__title" src="assets/prices/Прозрачные цены.svg" alt="Прозрачные цены" />
+            </div>
+
+            <div class="prices__grid">
+            <!-- card x12 -->
+            <article class="price-card">
+              <div class="price-card__icon"></div>
+              <h3 class="price-card__name">Логотип</h3>
+              <p class="price-card__desc">Уникальный знак для вашего бренда</p>
+              <div class="price-card__price">от 15 000 ₽</div>
+              <div class="price-card__time">2-4 рабочих дней</div>
+            </article>
+
+            <article class="price-card">
+              <div class="price-card__icon"></div>
+              <h3 class="price-card__name">Веб-дизайн</h3>
+              <p class="price-card__desc">Современные сайты и лендинги</p>
+              <div class="price-card__price">от 30 000 ₽</div>
+              <div class="price-card__time">1-2 недели</div>
+            </article>
+
+            <article class="price-card">
+              <div class="price-card__icon"></div>
+              <h3 class="price-card__name">Многостраничный сайт</h3>
+              <p class="price-card__desc">Корпоротивные сайты с продуманной структурой</p>
+              <div class="price-card__price">от 60 000 ₽</div>
+              <div class="price-card__time">2-4 недели</div>
+            </article>
+
+            <article class="price-card">
+              <div class="price-card__icon"></div>
+              <h3 class="price-card__name">ИИ - контент</h3>
+              <p class="price-card__desc">создание визуального и текстового контента</p>
+              <div class="price-card__price">от 5 000 ₽</div>
+              <div class="price-card__time">2-4 рабочих дней</div>
+            </article>
+
+            <article class="price-card is-active">
+              <div class="price-card__icon"></div>
+              <h3 class="price-card__name">Дизайн одежды</h3>
+              <p class="price-card__desc">Создание уникального дизайна одежды под любую идею</p>
+              <div class="price-card__price">от 10 000 ₽</div>
+              <div class="price-card__time">2-3 рабочих дня</div>
+            </article>
+
+            <article class="price-card">
+              <div class="price-card__icon"></div>
+              <h3 class="price-card__name">Дизайн упаковки</h3>
+              <p class="price-card__desc">Привлекательная упаковка продукции</p>
+              <div class="price-card__price">от 20 000 ₽</div>
+              <div class="price-card__time">1-2 недели</div>
+            </article>
+
+            <article class="price-card">
+              <div class="price-card__icon"></div>
+              <h3 class="price-card__name">Баннеры</h3>
+              <p class="price-card__desc">Рекламные баннеры для интернета и наружки</p>
+              <div class="price-card__price">от 7 000 ₽</div>
+              <div class="price-card__time">2-4 рабочих дня</div>
+            </article>
+
+            <article class="price-card">
+              <div class="price-card__icon"></div>
+              <h3 class="price-card__name">Монтаж</h3>
+              <p class="price-card__desc">Монтаж рилсов, длинных видеороликов и любой другой формат</p>
+              <div class="price-card__price">от 7 000 ₽</div>
+              <div class="price-card__time">3-5 рабочих дней</div>
+            </article>
+
+            <article class="price-card">
+              <div class="price-card__icon"></div>
+              <h3 class="price-card__name">Презентация</h3>
+              <p class="price-card__desc">Стильные презентации для бизнеса</p>
+              <div class="price-card__price">от 10 000 ₽</div>
+              <div class="price-card__time">3-5 рабочих дней</div>
+            </article>
+
+            <article class="price-card">
+              <div class="price-card__icon"></div>
+              <h3 class="price-card__name">Каталог / буклет</h3>
+              <p class="price-card__desc">Полиграфическая продукция для печати</p>
+              <div class="price-card__price">от 25 000 ₽</div>
+              <div class="price-card__time">1-2 недели</div>
+            </article>
+
+            <article class="price-card">
+              <div class="price-card__icon"></div>
+              <h3 class="price-card__name">Иллюстрация</h3>
+              <p class="price-card__desc">Кастомные иллюстрации под ваш бренд (маскоты и иконки)</p>
+              <div class="price-card__price">от 7 000 ₽</div>
+              <div class="price-card__time">2-5 рабочих дней</div>
+            </article>
+
+            <article class="price-card">
+              <div class="price-card__icon"></div>
+              <h3 class="price-card__name">Меню / флаер</h3>
+              <p class="price-card__desc">Дизайн для HoReCa и рекламные листовки</p>
+              <div class="price-card__price">от 7 000 ₽</div>
+              <div class="price-card__time">2-3 рабочих дня</div>
+            </article>
+          </div>
+        </div>
+        <div class="prices__decor prices__decor--tl" aria-hidden="true"></div>
+        <div class="prices__decor prices__decor--br" aria-hidden="true"></div>
+      </section>
+
+      <section class="roadmap" id="roadmap">
+        <div class="roadmap__container">
+          <div class="roadmap__head">
+            <div class="roadmap__kicker">ПРОЦЕСС РАБОТЫ</div>
+            <h2 class="roadmap__title">Как мы <span>работаем</span></h2>
+          </div>
+
+          <div class="roadmap__track" aria-label="Этапы работы">
+            <span class="roadmap__line" aria-hidden="true"></span>
+
+            <article class="step">
+              <div class="step__dot"><span>01</span></div>
+              <h3 class="step__title">Бриф</h3>
+              <p class="step__desc">Обсуждаем задачу, цели и ожидания. Заполняем бриф для понимания проекта.</p>
+            </article>
+
+            <article class="step">
+              <div class="step__dot"><span>02</span></div>
+              <h3 class="step__title">Анализ</h3>
+              <p class="step__desc">Анализирую рынок, конкурентов и целевую аудиторию.</p>
+            </article>
+
+            <article class="step">
+              <div class="step__dot"><span>03</span></div>
+              <h3 class="step__title">Концепт</h3>
+              <p class="step__desc">Разрабатываю 2–3 концепции и презентую их для выбора направления.</p>
+            </article>
+
+            <article class="step step--active">
+              <div class="step__dot"><span>04</span></div>
+              <h3 class="step__title">Финализация</h3>
+              <p class="step__desc">Вношу правки и довожу выбранный концепт до совершенства.</p>
+            </article>
+
+            <article class="step">
+              <div class="step__dot"><span>05</span></div>
+              <h3 class="step__title">Передача</h3>
+              <p class="step__desc">Передаю все материалы и исходники, провожу инструктаж.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="faq" id="faq">
+        <img class="faq__decor" src="assets/faq/Group 137.webp" alt="" aria-hidden="true" loading="lazy" />
+
+        <div class="faq__container">
+          <div class="faq__head">
+            <div class="faq__kicker">FAQ</div>
+            <img class="faq__title" src="assets/faq/Частые вопросы.svg" alt="Частые вопросы" />
+          </div>
+
+          <div class="faq__grid">
+            <div class="faq__col">
+              <div class="faq-item is-open">
+                <div class="faq-item__row">
+                  <div class="faq-item__q">Сколько времени занимает создание логотипа?</div>
+                  <div class="faq-item__icon"></div>
+                </div>
+                <div class="faq-item__panel">
+                  Разработка логотипа занимает от 2 до 4 рабочих дней...
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-item__row">
+                  <div class="faq-item__q">Какие форматы файлов я получу?</div>
+                  <div class="faq-item__icon"></div>
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-item__row">
+                  <div class="faq-item__q">Как происходит оплата?</div>
+                  <div class="faq-item__icon"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="faq__col">
+              <div class="faq-item">
+                <div class="faq-item__row">
+                  <div class="faq-item__q">Работаете ли вы с клиентами из других стран?</div>
+                  <div class="faq-item__icon"></div>
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-item__row">
+                  <div class="faq-item__q">Сколько правок включено в стоимость?</div>
+                  <div class="faq-item__icon"></div>
+                </div>
+              </div>
+
+              <div class="faq-item">
+                <div class="faq-item__row">
+                  <div class="faq-item__q">Предоставляете ли вы договор?</div>
+                  <div class="faq-item__icon"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="contact" id="contact">
+        <div class="contact__container">
+          <div class="contact__stage">
+            <img class="contact__decor contact__decor--mac" src="assets/contact/contact-mac.webp" alt="" aria-hidden="true">
+            <img class="contact__decor contact__decor--folder" src="assets/contact/contact-folder.webp" alt="" aria-hidden="true">
+
+            <div class="contact__card">
+              <div class="contact__pill">
+                <span class="contact__dot"></span>
+                Контакты
+              </div>
+
+              <h2 class="contact__title">
+                <img
+                  src="assets/contact/contact-title.svg"
+                  alt="Давай создадим что-то крутое"
+                  loading="lazy"
+                />
+              </h2>
+
+              <p class="contact__subtitle">
+                Готовы обсудить ваш проект? Свяжитесь со мной удобным способом.
+              </p>
+
+              <a class="contact__tg" href="https://t.me/kaytekistudio" target="_blank" rel="noreferrer">
+                <span class="contact__tg-ic" aria-hidden="true"></span>
+                <span class="contact__tg-text">@kaytekistudio</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="footer__container">
+          <img class="footer__logo" src="assets/footer/лого.webp" alt="KAYTEKI">
+          <div class="footer__copy">© 2026 KAYTEKI. Все права защищены.</div>
+        </div>
+      </footer>
+    </main>
+
+    <script>
+      // минимальный бургер
+      const btn = document.querySelector(".burger");
+      const menu = document.querySelector(".mobile-menu");
+      btn?.addEventListener("click", () => {
+        const open = btn.getAttribute("aria-expanded") === "true";
+        btn.setAttribute("aria-expanded", String(!open));
+        menu.setAttribute("aria-hidden", String(open));
+        menu.classList.toggle("is-open", !open);
+      });
+      menu?.addEventListener("click", (e) => {
+        if (e.target.tagName === "A") {
+          btn.setAttribute("aria-expanded", "false");
+          menu.setAttribute("aria-hidden", "true");
+          menu.classList.remove("is-open");
+        }
+      });
+    </script>
+  </body>
+</html>
