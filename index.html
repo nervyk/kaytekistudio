@@ -530,6 +530,7 @@
 
           <div class="roadmap__track" aria-label="Этапы работы">
             <span class="roadmap__line" aria-hidden="true"></span>
+            <span class="roadmap__active-ball" aria-hidden="true"><span>04</span></span>
 
             <article class="step">
               <div class="step__dot"><span>01</span></div>
@@ -684,6 +685,131 @@
           menu.classList.remove("is-open");
         }
       });
+
+      (function () {
+        const track = document.querySelector(".roadmap__track");
+        if (!track) return;
+
+        const line = track.querySelector(".roadmap__line");
+        const ball = track.querySelector(".roadmap__active-ball");
+        const ballText = ball?.querySelector("span");
+        const steps = Array.from(track.querySelectorAll(".step"));
+        if (!line || !ball || !ballText || steps.length === 0) return;
+
+        const defaultStep = steps.find((step) => step.classList.contains("step--active")) || steps[0];
+        let currentStep = defaultStep;
+        let currentPos = null;
+        let ballAnimation = null;
+
+        const isDesktopHover = () =>
+          window.matchMedia("(min-width: 1360px)").matches &&
+          window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
+          !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
+          window.getComputedStyle(line).display !== "none";
+
+        const getDotCenter = (step) => {
+          const dot = step.querySelector(".step__dot");
+          if (!dot) return null;
+          const trackRect = track.getBoundingClientRect();
+          const dotRect = dot.getBoundingClientRect();
+          return {
+            x: dotRect.left - trackRect.left + dotRect.width / 2,
+            y: dotRect.top - trackRect.top + dotRect.height / 2,
+          };
+        };
+
+        const setBallText = (step) => {
+          const num = step.querySelector(".step__dot span")?.textContent?.trim();
+          if (num) ballText.textContent = num;
+        };
+
+        const placeBall = (step) => {
+          const center = getDotCenter(step);
+          if (!center) return;
+          const size = ball.offsetWidth || 129;
+          const x = center.x - size / 2;
+          const y = center.y - size / 2;
+          currentPos = { x, y };
+          ball.style.transform = `translate(${x}px, ${y}px)`;
+          setBallText(step);
+        };
+
+        const jumpBall = (step) => {
+          const center = getDotCenter(step);
+          if (!center) return;
+          const size = ball.offsetWidth || 129;
+          const target = { x: center.x - size / 2, y: center.y - size / 2 };
+          setBallText(step);
+
+          if (!currentPos) {
+            currentPos = target;
+            ball.style.transform = `translate(${target.x}px, ${target.y}px)`;
+            return;
+          }
+
+          if (ballAnimation) {
+            ballAnimation.cancel();
+            ballAnimation = null;
+          }
+
+          const midX = currentPos.x + (target.x - currentPos.x) * 0.5;
+          const peakY = Math.min(currentPos.y, target.y) - 28;
+
+          if (typeof ball.animate === "function") {
+            ballAnimation = ball.animate(
+              [
+                { transform: `translate(${currentPos.x}px, ${currentPos.y}px) scale(1)` },
+                { transform: `translate(${midX}px, ${peakY}px) scale(1.05)` },
+                { transform: `translate(${target.x}px, ${target.y}px) scale(1)` },
+              ],
+              {
+                duration: 520,
+                easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+                fill: "forwards",
+              }
+            );
+            ballAnimation.onfinish = () => {
+              ball.style.transform = `translate(${target.x}px, ${target.y}px)`;
+            };
+          } else {
+            ball.style.transform = `translate(${target.x}px, ${target.y}px)`;
+          }
+
+          currentPos = target;
+        };
+
+        const activateTrack = () => {
+          if (!isDesktopHover()) {
+            track.classList.remove("is-interactive");
+            currentPos = null;
+            return;
+          }
+          track.classList.add("is-interactive");
+          placeBall(currentStep);
+        };
+
+        steps.forEach((step) => {
+          step.addEventListener("mouseenter", () => {
+            if (!track.classList.contains("is-interactive")) return;
+            currentStep = step;
+            jumpBall(step);
+          });
+          step.addEventListener("focusin", () => {
+            if (!track.classList.contains("is-interactive")) return;
+            currentStep = step;
+            jumpBall(step);
+          });
+        });
+
+        track.addEventListener("mouseleave", () => {
+          if (!track.classList.contains("is-interactive")) return;
+          currentStep = defaultStep;
+          jumpBall(defaultStep);
+        });
+
+        window.addEventListener("resize", activateTrack, { passive: true });
+        activateTrack();
+      })();
     </script>
   </body>
 </html>

@@ -896,6 +896,9 @@
         const activeBlob = roadmap.querySelector(".roadmap-active-blob");
         const steps = Array.from(roadmap.querySelectorAll(".roadmap-step"));
         const defaultStep = roadmap.querySelector(".roadmap-step-4");
+        const motionEnabled =
+          !window.matchMedia("(max-width: 768px)").matches &&
+          !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         const blobSize = 129;
         const baseSize = 99;
         const offset = (blobSize - baseSize) / 2;
@@ -911,7 +914,7 @@
           const y = Number(step.dataset.y) - offset;
           return { x, y };
         };
-        const setActive = (step, animate = true) => {
+        const setActive = (step, animate = motionEnabled) => {
           if (!step || !activeBlob) return;
           const target = getTarget(step);
           const dx = target.x - currentX;
@@ -928,7 +931,7 @@
             clearTimeout(activateTimer);
             activateTimer = null;
           }
-          if (!animate) {
+          if (!animate || !motionEnabled) {
             currentX = target.x;
             currentY = target.y;
             activeBlob.style.transform = `translate(${currentX}px, ${currentY}px) scale(1)`;
@@ -961,7 +964,7 @@
           currentY = target.y;
         };
         steps.forEach((step) => {
-          step.addEventListener("mouseenter", () => setActive(step));
+          step.addEventListener("mouseenter", () => setActive(step, motionEnabled));
         });
         setActive(defaultStep, false);
       })();

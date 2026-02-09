@@ -67,7 +67,7 @@ body {
   height: 80px;
   background: #ffffff;
   border: 1px solid #e5e5e5;
-  z-index: 5;
+  z-index: 25;
 }
 
 .hero-burger {
@@ -244,6 +244,7 @@ body {
   width: 972.75px;
   height: 490px;
   z-index: 3;
+  pointer-events: none;
 }
 
 .hero-content {
@@ -263,6 +264,7 @@ body {
   opacity: 0;
   transform: var(--ball-transform) scale(0);
   animation: ball-pop 1600ms cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+  pointer-events: none;
 }
 
 .ball-left {
@@ -497,10 +499,9 @@ body {
   top: 101.92px;
   width: 86.71px;
   height: 201.37px;
-  --base-rot: 15.26deg;
-  transform: rotate(var(--base-rot));
+  transform: rotate(-15deg);
   transform-origin: 50% 90%;
-  animation: kayteki-pendulum 5s ease-in-out infinite;
+  animation: kayteki-pendulum 4.2s ease-in-out infinite;
   z-index: 2;
 }
 
@@ -562,14 +563,12 @@ body {
 }
 
 @keyframes kayteki-pendulum {
-  0% {
-    transform: rotate(calc(var(--base-rot) - 15deg));
+  0%,
+  100% {
+    transform: rotate(-15deg);
   }
   50% {
-    transform: rotate(calc(var(--base-rot) + 15deg));
-  }
-  100% {
-    transform: rotate(calc(var(--base-rot) - 15deg));
+    transform: rotate(15deg);
   }
 }
 
@@ -3121,6 +3120,9 @@ body {
     top: 12%;
     width: clamp(60px, 8vw, 120px);
     height: auto;
+    transform: rotate(-15deg);
+    transform-origin: 50% 88%;
+    animation: kayteki-pendulum 4.2s ease-in-out infinite;
   }
 
   .about-text {
@@ -3673,8 +3675,9 @@ body {
     top: 101.92px;
     width: 86.71px;
     height: 201.37px;
-    transform: rotate(15.26deg);
-    animation: kayteki-pendulum 5s ease-in-out infinite;
+    transform: rotate(-15deg);
+    transform-origin: 50% 90%;
+    animation: kayteki-pendulum 4.2s ease-in-out infinite;
   }
 
   .about-text {
@@ -4905,5 +4908,15 @@ body {
     font-size: 10px;
     line-height: 11px;
     color: #f5f5f7;
+  }
+}
+
+/* Mobile: без любых анимаций */
+@media (max-width: 768px), (max-device-width: 768px) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }

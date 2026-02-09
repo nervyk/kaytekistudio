@@ -225,21 +225,50 @@ body {
   position: absolute;
   z-index: 2;
   display: block;
-  will-change: transform;
+  --ball-transform: none;
+  transform: var(--ball-transform) scale(0.55);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: hero-ball-pop 900ms cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
 }
 .ball-left {
   left: 467px;
   top: 190px;
   width: 184.62px;
   height: 195.92px;
-  transform: matrix(-0.94, 0.34, 0.34, 0.94, 0, 0);
+  --ball-transform: matrix(-0.94, 0.34, 0.34, 0.94, 0, 0);
+  animation-delay: 0ms;
 }
 .ball-right {
   left: 1174px;
   top: 172px;
   width: 184.62px;
   height: 211px;
-  transform: rotate(30.23deg);
+  --ball-transform: rotate(30.23deg);
+  animation-delay: 180ms;
+}
+
+@keyframes hero-ball-pop {
+  0% {
+    transform: var(--ball-transform) scale(0.55);
+    opacity: 0;
+  }
+  65% {
+    transform: var(--ball-transform) scale(1.06);
+    opacity: 1;
+  }
+  100% {
+    transform: var(--ball-transform) scale(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ball {
+    animation: none;
+    transform: var(--ball-transform) scale(1);
+    opacity: 1;
+  }
 }
 
 /* ---- Бейдж статуса ---- */
@@ -460,13 +489,25 @@ body {
 }
 
 /* --- 3D фигура справа --- */
+@keyframes about-figure-sway {
+  0%,
+  100% {
+    transform: translateX(30px) rotate(-15deg);
+  }
+  50% {
+    transform: translateX(30px) rotate(15deg);
+  }
+}
+
 .about-figure{
   position:absolute;
   left:1375.07px;
   top:101.92px;
   width:86.71px;
   height:201.37px;
-  transform: translateX(30px) rotate(15.26deg);
+  transform: translateX(30px) rotate(-15deg);
+  transform-origin: 50% 88%;
+  animation: about-figure-sway 4.2s ease-in-out infinite;
   display:block;
 }
 
@@ -1387,6 +1428,30 @@ body {
   background: #E5EBFF;
 }
 
+.roadmap__active-ball{
+  position: absolute;
+  z-index: 4;
+  width: var(--roadmap-active-dot);
+  height: var(--roadmap-active-dot);
+  border-radius: 999px;
+  background: #0038FF;
+  border: 3px solid #0038FF;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(0, 0);
+  will-change: transform;
+}
+
+.roadmap__active-ball span{
+  font-family: Manrope, sans-serif;
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 1;
+  color: #fff;
+}
+
 /* элементы шага — выше линии */
 .step{
   position: relative;
@@ -1459,6 +1524,28 @@ body {
 .step--active .step__dot span{
   font-size: 48px;
   color: #fff;
+}
+
+.roadmap__track.is-interactive .roadmap__active-ball{
+  opacity: 1;
+}
+
+.roadmap__track.is-interactive .step{
+  cursor: pointer;
+}
+
+.roadmap__track.is-interactive .step--active .step__dot{
+  width: var(--roadmap-dot);
+  height: var(--roadmap-dot);
+  transform: none;
+  background: #fff;
+  border-color: #0038FF;
+  margin-bottom: 22px;
+}
+
+.roadmap__track.is-interactive .step--active .step__dot span{
+  font-size: 36px;
+  color: #0038FF;
 }
 
 /* Ноут: 3 в ряд */
@@ -2406,5 +2493,15 @@ body {
     text-align: right;
     font-size: 10px;
     line-height: 12px;
+  }
+}
+
+/* Mobile: без любых анимаций */
+@media (max-width: 768px), (max-device-width: 768px) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }
